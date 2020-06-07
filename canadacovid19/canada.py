@@ -9,7 +9,7 @@ from requests import Response
 async def _download_file():
     session = AsyncHTMLSession()
     url = "https://www150.statcan.gc.ca/n1/tbl/csv/13100781-eng.zip"
-    resp: Response = await session.get(session, stream=True)
+    resp: Response = await session.get(url, stream=True)
     filename = "tmp.zip"
     with open(filename, "wb") as f:
         for chunk in resp.iter_content(1024):
