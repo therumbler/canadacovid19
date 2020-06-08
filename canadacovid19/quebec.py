@@ -37,5 +37,5 @@ async def get_data():
     resp = await session.get(url)
     div = resp.html.find("#c50214", first=True)
     data = _parse_data_div(div)
-    # logger.info(data)
+    logger.info(data)
     return data
