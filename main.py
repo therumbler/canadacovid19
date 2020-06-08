@@ -2,7 +2,7 @@
 import asyncio
 import logging
 import sys
-from canadacovid19 import quebec, ontario
+from canadacovid19 import quebec, ontario, canada
 
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,12 @@ def setup_logging(level):
 
 
 async def main():
-    responses = await asyncio.gather(quebec.get_data(), ontario.get_data())
+    coros = [
+        quebec.get_data(),
+        # ontario.get_data(),
+        canada.get_data(),
+    ]
+    responses = await asyncio.gather(*coros)
     logger.info(responses)
 
 
