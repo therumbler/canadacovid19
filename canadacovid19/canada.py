@@ -182,7 +182,7 @@ async def _download_csv_file():
 
 def _process_csv_row(headers, row, regions):
     data = {k: row[v] for k, v in [(k, v) for k, v in headers.items()]}
-    # logger.info(data)
+    logger.info(data)
 
     # regions.setdefault(region, 0)
     # only get yesterday's data
@@ -190,9 +190,10 @@ def _process_csv_row(headers, row, regions):
     yesterday = (datetime.today() + one_day).strftime("%d-%m-%Y")
     if not data["date"] == yesterday:
         return
-    region = data["prname"]
+    province = data["prname"]
+    regions.setdefault(province, {})
     try:
-        regions[region] = int(data["numtotal"])
+        regions[province]["Total"] = int(data["numtotal"])
     except ValueError:
         pass
 
