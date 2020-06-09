@@ -182,36 +182,57 @@ async def _download_csv_file():
 
 def _process_csv_row(headers, row, regions):
     data = {k: row[v] for k, v in [(k, v) for k, v in headers.items()]}
-    logger.info(data)
-
+    # logger.info(data)
     # regions.setdefault(region, 0)
     # only get yesterday's data
     one_day = timedelta(-1)
     yesterday = (datetime.today() + one_day).strftime("%d-%m-%Y")
     if not data["date"] == yesterday:
+        # logger.error("no data for %s", yesterday)
         return
     province = data["prname"]
+    if province in ("Canada", "Ontario", "Quebec"):
+        logger.debug("skipping province %s", province)
+        return
     regions.setdefault(province, {})
+    # logger.info("data = %s", data)
     try:
-        regions[province]["Total"] = int(data["numtotal"])
+        rate = float(data.get("ratetotal", 0))
+    except ValueError:
+        rate = 0
+    try:
+        population = int(int(data["numtotal"]) * (100000 / rate))
+    except ZeroDivisionError:
+        logger.error("cannot calculate population for %s", data)
+        if province == "Nunavut":
+            population = 38780
+        else:
+            population = None
+    try:
+        regions[province]["Total"] = {
+            "count": int(data["numtotal"]),
+            "rate": rate,
+            "population": population,
+        }
     except ValueError:
         pass
 
 
 def _process_csv_file(filename):
     """"""
+    regions = {}
     with open(filename) as csvtext:
         # csvtext = TextIOWrapper(csvbinary, encoding="utf-8-sig")
         datareader = csv.reader(csvtext)
         counter = 1
         headers = {}
-        regions = {}
+
         for row in datareader:
             if not headers:
                 logger.info("setting headers")
                 for index, value in enumerate(row):
                     headers[value.strip()] = index
-                logger.info("headers = %s", headers)
+                # logger.info("headers = %s", headers)
                 continue
             _process_csv_row(headers, row, regions)
             # if counter > 200:
@@ -219,6 +240,9 @@ def _process_csv_file(filename):
             counter += 1
 
     logger.info("processed %d records", counter)
+    if not regions:
+        logger.error("can't find any data for yesterday?")
+    # logger.info("regions %s", regions)
     # logger.info(REGIONS)
     # logger.info(CASES)
     return regions

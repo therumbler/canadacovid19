@@ -71,7 +71,16 @@ def _get_age_sex(filename: str, phus: dict):
         # if row["ageID"] == 11:
         data[phu]["count"] = int(row["countAllCases"])
         data[phu]["rate"] = row["rateAllCases"]
+        data[phu]["population"] = int(
+            int(row["countAllCases"]) * (100000 / row["rateAllCases"])
+        )
 
+        # rate = (count / population)
+        # population = rate * (1 / count)
+        # rate / 100000 = count / population
+        #
+        # (rate / 100000) * (1 / count )= population
+        #
         # logger.info(row)
     return data
 

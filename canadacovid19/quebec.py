@@ -4,7 +4,7 @@ https://www.quebec.ca/en/health/health-issues/a-z/2019-coronavirus/situation-cor
 import logging
 import re
 from requests_html import AsyncHTMLSession
-
+from .radiocanada import get_province
 
 logger = logging.getLogger(__name__)
 
@@ -30,12 +30,28 @@ def _parse_data_div(div):
     return data
 
 
+def _parse_radiocanada_data(radiocanada_data):
+    data = {}
+
+    for region in radiocanada_data[0]["Regions"]:
+        data[region["Name"]] = {
+            "count": region["Confirmed"],
+            "population": region["Population"],
+        }
+    return data
+
+
 async def get_data():
     """get quebec data"""
-    session = AsyncHTMLSession()
-    url = "https://www.quebec.ca/en/health/health-issues/a-z/2019-coronavirus/situation-coronavirus-in-quebec/"
-    resp = await session.get(url)
-    div = resp.html.find("#c50214", first=True)
-    data = _parse_data_div(div)
+    # session = AsyncHTMLSession()
+    # url = "https://www.quebec.ca/en/health/health-issues/a-z/2019-coronavirus/situation-coronavirus-in-quebec/"
+    # resp = await session.get(url)
+
+    # div = resp.html.find("#c50214", first=True)
+    # data = _parse_data_div(div)
+    resp = await get_province("quebec")
+    data = _parse_radiocanada_data(resp)
+
     logger.info(data)
-    return data
+
+    return {"Quebec": data}
