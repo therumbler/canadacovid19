@@ -19,12 +19,11 @@ async def _download_xlsx(url: str, session):
     parsed_url = urlparse(url)
     filename = parsed_url.path.split("/")[-1]
     logger.info("filename %s", filename)
-    # return filename
-    # resp = await session.get(url)
-    # resp: Response = await session.get(url, stream=True)
-    # with open(filename, "wb") as f:
-    #     for chunk in resp.iter_content(1024):
-    #         f.write(chunk)
+    resp = await session.get(url)
+    resp: Response = await session.get(url, stream=True)
+    with open(filename, "wb") as f:
+        for chunk in resp.iter_content(1024):
+            f.write(chunk)
     return filename
 
 
