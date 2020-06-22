@@ -111,13 +111,10 @@ REGIONS = {
 
 def _process_row(headers, row):
     data = {k: row[v] for k, v in [(k, v) for k, v in headers.items()]}
-    # logger.info(data)
     case_identifcation_number = data["Case identifier number"]
     if case_identifcation_number not in CASES:
-        # logger.info("new case %s", case_identifcation_number)
         pass
     if data["Case information"] == "Region":
-        # logger.info("region")
         region = data["VALUE"]
         REGIONS[region].setdefault("count", 0)
         REGIONS[region]["count"] = REGIONS[region].get("count", 0) + 1
@@ -171,11 +168,11 @@ async def _download_csv_file():
     session = AsyncHTMLSession()
     url = "https://health-infobase.canada.ca/src/data/covidLive/covid19.csv"
     filename = "tmp.csv"
-    # resp: Response = await session.get(url, stream=True)
+    resp: Response = await session.get(url, stream=True)
 
-    # with open(filename, "wb") as f:
-    #     for chunk in resp.iter_content(1024):
-    #         f.write(chunk)
+    with open(filename, "wb") as f:
+        for chunk in resp.iter_content(1024):
+            f.write(chunk)
 
     return filename
 
@@ -209,7 +206,7 @@ def _process_csv_row(headers, row, regions):
         else:
             population = None
     try:
-        regions[province]["Total"] = {
+        regions[province]["All"] = {
             "count": int(data["numtotal"]),
             "rate": rate,
             "population": population,
