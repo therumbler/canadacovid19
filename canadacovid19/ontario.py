@@ -18,7 +18,6 @@ async def _download_xlsx(url: str, session):
     # https://ws1.publichealthontario.ca/appdata/COVID/PROD/graphs.xlsx
     parsed_url = urlparse(url)
     filename = parsed_url.path.split("/")[-1]
-    logger.info("filename %s", filename)
     resp = await session.get(url)
     resp: Response = await session.get(url, stream=True)
     with open(filename, "wb") as f:
@@ -47,7 +46,6 @@ def _get_phus(filename: str):
     phus = {}
     for index, row in df.iterrows():
         phus[row["PHU_ID"]] = row["PHU_Name"]
-        # logger.info("%s", row["PHU_ID"])
     logger.info("phus = %s", phus)
     return phus
 
@@ -65,7 +63,6 @@ def _get_age_sex(filename: str, phus: dict):
             continue
         area_id = int(row["areaID"])
         phu = phus[area_id]
-        # logger.info("phu %s", phu)
         data.setdefault(phu, {})
         # if row["ageID"] == 11:
         data[phu]["count"] = int(row["countAllCases"])

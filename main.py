@@ -22,7 +22,6 @@ async def main():
         canada.get_data(),
     ]
     responses = await asyncio.gather(*coros)
-    # logger.info(responses)
 
     data = []
     for response in responses:

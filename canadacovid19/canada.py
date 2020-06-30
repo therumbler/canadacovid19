@@ -159,8 +159,6 @@ def _process_zip_file(filename):
                 counter += 1
 
     logger.info("processed %d records", counter)
-    logger.info(REGIONS)
-    # logger.info(CASES)
     return REGIONS
 
 
@@ -179,8 +177,6 @@ async def _download_csv_file():
 
 def _process_csv_row(headers, row, regions):
     data = {k: row[v] for k, v in [(k, v) for k, v in headers.items()]}
-    # logger.info(data)
-    # regions.setdefault(region, 0)
     # only get yesterday's data
     one_day = timedelta(-1)
     yesterday = (datetime.today() + one_day).strftime("%d-%m-%Y")
@@ -192,7 +188,6 @@ def _process_csv_row(headers, row, regions):
         logger.debug("skipping province %s", province)
         return
     regions.setdefault(province, {})
-    # logger.info("data = %s", data)
     try:
         rate = float(data.get("ratetotal", 0))
     except ValueError:
@@ -229,7 +224,6 @@ def _process_csv_file(filename):
                 logger.info("setting headers")
                 for index, value in enumerate(row):
                     headers[value.strip()] = index
-                # logger.info("headers = %s", headers)
                 continue
             _process_csv_row(headers, row, regions)
             # if counter > 200:
