@@ -33,7 +33,7 @@ async def main():
             data.append(response)
 
     for d in data:
-        logger.info(d)
+        logger.debug(d)
 
     with open("public/alldata.json", "w") as f:
         f.write(json.dumps(data))

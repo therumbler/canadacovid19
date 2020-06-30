@@ -46,7 +46,6 @@ def _get_phus(filename: str):
     phus = {}
     for index, row in df.iterrows():
         phus[row["PHU_ID"]] = row["PHU_Name"]
-    logger.info("phus = %s", phus)
     return phus
 
 
